@@ -1,0 +1,9 @@
+on:
+  push:
+    branches:
+    - main
+
+jobs:
+    run-actions:
+        steps:
+        - uses therealzoidberg/notebook_ci_actions
