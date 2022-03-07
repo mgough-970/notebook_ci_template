@@ -6,4 +6,4 @@ on:
 jobs:
     run-actions:
         steps:
-            - uses: therealzoidberg/notebook_ci_actions
+            - uses: therealzoidberg/notebook_ci_actions@main
