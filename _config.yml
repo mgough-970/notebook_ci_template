@@ -5,6 +5,9 @@ title: Notebook repository template (CHANGE THIS)
 author: STScI (CHANGE AS NEEDED)
 logo: logo.png (CHANGE AS NEEDED)
 
+html:
+  google_analytics_id: 
+  
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
 execute:
