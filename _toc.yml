@@ -3,6 +3,7 @@
 
 format: jb-book
 root: intro
-chapters:
-- file: markdown
-- file: notebooks
+parts:
+    - caption: Example Notebook
+      chapters:
+          - file: notebooks/example_notebook/example_notebook.ipynb
