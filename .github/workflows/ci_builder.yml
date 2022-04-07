@@ -1,18 +1,17 @@
-name: Build and deploy notebooks
-
-#  Only run this when the master branch changes
+name: Deploy_HTML
+# Only trigger, when the validation workflow succeeded
 on:
-  push:
+  workflow_run:
+    workflows: ["ci_validation"]
     branches:
-    - main
-    # If your git repository has the Jupyter Book within some-subfolder next to
-    # unrelated files, you can make this run only if a file within that specific
-    # folder has been modified.
-    #
-    # paths:
-    # - some-subfolder/**
-    paths:
-      - 'notebooks/**.ipynb'
+      - main
+    types:
+     - completed
+   # paths:
+   #   - 'notebooks/**.ipynb'
+
+
+
 
 # This job installs dependencies, builds the book, and pushes it to `gh-pages`
 jobs:       
@@ -41,16 +40,10 @@ jobs:
         pip install nbval
         PATH="${PATH}:${HOME}/.local/bin"
         
-    #- name: nbval validation step
-    #  run: |
-    #    python -m pytest --nbval --durations 10
-    #    
-    #    #- name: Build book TOC file 
-    #    #run: |
-    #    #jupyter-book toc from-project ./notebooks
     - name: Build book HTML 
       run: |
         jupyter-book build .
+        
     # Push the book's HTML to github-pages
     - name: GitHub Pages action
       uses: peaceiris/actions-gh-pages@v3.6.1

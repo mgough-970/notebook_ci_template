@@ -31,10 +31,37 @@ jobs:
         pip install -r CIenvironment.yml
         pip install pytest
         pip install nbval
+        pip install bandit
         pip install nbconvert
-    - name: Execute notebooks
+        pip install -I jinja2==3.0.3
+      
+    - name: Gather changed notebooks
+      id: changed-files
+      uses: tj-actions/changed-files@v18.4
+      with:
+        files: |
+          **/*.ipynb
+
+    - name: Security testing with Bandit
       run: |
-        find . -name '*.ipynb' -type f -execdir jupyter nbconvert --template classic --to html --execute {} \; 
-    - name: Test with pytest
+        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          echo "$file was updated, validating notebook"
+          run: | 
+            bandit $file
+        done
+          
+    - name: Executing changed notebooks
       run: |
-        pytest --nbval
+        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          echo "$file was updated, executing notebook"
+          run: | 
+            jupyter nbconvert --template classic --to html --execute $file
+        done
+        
+    - name: Validating with NBVAL
+      run: |
+        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
+          echo "$file was updated, validating notebook"
+          run: | 
+            pytest --nbval $file
+        done
