@@ -1,6 +1,4 @@
-jupyter-book
-matplotlib
-numpy
 astropy
 astroquery
 matplotlib
+numpy
