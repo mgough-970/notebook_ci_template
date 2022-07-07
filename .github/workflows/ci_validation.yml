@@ -7,7 +7,9 @@ on:
     paths:
       - 'notebooks/**.ipynb'
 env: 
-  WEBBPSF_PATH: $HOME/data/webbpsf-data
+  WEBBPSF_PATH: $PWD/data/webbpsf-data
+  PYSYN_CDBS: $PWD/grp/redcat/trds/
+
 jobs:
   build-linux:
     runs-on: ubuntu-latest
@@ -28,13 +30,11 @@ jobs:
     - name: Install dependencies
       run: |
         #conda env update --file CIenvironment.yml --name base
-        pip install -r CIenvironment.yml
+        pip install -r requirements.txt
         pip install pytest
         pip install nbval
-        pip install bandit
         pip install nbconvert
-        pip install -I jinja2==3.0.3
-      
+        
     - name: Gather changed notebooks
       id: changed-files
       uses: tj-actions/changed-files@v18.4
@@ -42,14 +42,14 @@ jobs:
         files: |
           **/*.ipynb
 
-    - name: Security testing with Bandit
+    - name: Valdiating changed notebooks
       run: |
         for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
           echo "$file was updated, validating notebook"
           run: | 
-            bandit $file
+            pytest --nbval $file
         done
-          
+        
     - name: Executing changed notebooks
       run: |
         for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
@@ -57,11 +57,11 @@ jobs:
           run: | 
             jupyter nbconvert --template classic --to html --execute $file
         done
+
         
-    - name: Validating with NBVAL
-      run: |
-        for file in ${{ steps.changed-files.outputs.all_changed_files }}; do
-          echo "$file was updated, validating notebook"
-          run: | 
-            pytest --nbval $file
-        done
+#    - name: Execute notebooks
+#      run: |
+#        find . -name '*.ipynb' -type f -execdir jupyter nbconvert --template classic --to html --execute {} \; 
+#    - name: Test with pytest
+#      run: |
+#        pytest --nbval
