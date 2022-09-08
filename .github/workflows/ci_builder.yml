@@ -14,13 +14,6 @@ on:
     paths:
       - 'notebooks/**.ipynb'
   workflow_call:
-    inputs:
-      username:
-        required: true
-        type: string
-    secrets:
-       token:
-        required: true
 
 permissions:
   pull-requests: write
